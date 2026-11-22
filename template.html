@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glycan Flow Simulator | Forward × Inverse</title>
+<meta name="description" content="糖鎖の反応容量を操作し、4つのForward手法とInverse補正を体験する、研究モデルの説明用デモです。">
+<style>
+:root{color-scheme:dark;--bg:#090f1c;--panel:#111c2c;--panel2:#172539;--line:#30465b;--muted:#adc0d1;--white:#eff8ff;--teal:#65ddbf;--gold:#f5c568;--blue:#81a9ec;--coral:#fb937e;--panel-shadow:0 22px 72px rgba(0,0,0,.27);font-family:Inter,'Hiragino Kaku Gothic ProN',Meiryo,ui-sans-serif,system-ui,sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--white);background:radial-gradient(ellipse 85% 70% at 10% -20%,#1a3750 0,transparent 70%),radial-gradient(ellipse 65% 60% at 100% 105%,#173344 0,transparent 65%),var(--bg);min-height:100vh}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,.edge-hit:focus-visible{outline:3px solid #f5c568;outline-offset:3px}a{color:var(--teal)}[hidden]{display:none!important}main{max-width:1240px;margin:auto;padding:25px 22px 55px}
+.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap}.eyebrow{color:var(--teal);font-size:11px;letter-spacing:.16em;font-weight:850;text-transform:uppercase;margin:0 0 8px}.hero h1{font-size:clamp(24px,3vw,34px);letter-spacing:-.02em;line-height:1.3;margin:0 0 8px}.hero .desc{font-size:14px;color:#c6d3e0;line-height:1.6;margin:0;max-width:800px}.demoTag{font-size:12px;color:#f1d8a5;background:#634c2d50;border:1px solid #be965650;padding:9px 12px;border-radius:999px;white-space:nowrap}
+.guides{display:flex;gap:8px;margin:22px 0 15px;flex-wrap:wrap}.guide{border:1px solid #28495a;background:#1734438c;border-radius:10px;padding:9px 13px;font-weight:700;font-size:12px;color:#d6f2eb}.guide b{display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;border-radius:999px;background:#347c77;color:white;margin-right:7px}
+.modebar{display:flex;gap:8px;margin:16px 0}.mode{border:1px solid #3d5565;background:#152437;color:#b5c5d3;padding:11px 18px;border-radius:11px;font-weight:800;font-size:13px;min-height:42px}.mode[aria-pressed="true"]{background:#1d6c69;color:#fff;border-color:#69d7c0;box-shadow:inset 0 0 0 1px #8fe0cd4f}.grid{display:grid;grid-template-columns:minmax(0,1.46fr) minmax(310px,.94fr);gap:16px;align-items:start}.panel{background:linear-gradient(155deg,#152336,#101b2a);border:1px solid #32465a;border-radius:18px;box-shadow:var(--panel-shadow);padding:20px;min-width:0}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.section-head h2{font-size:16px;margin:0;letter-spacing:.01em}.small-note{font-size:11px;color:#abc1d1}.tag{font-size:11px;font-weight:800;color:#8cfae1;background:#1c4b4a;border-radius:999px;padding:5px 9px;white-space:nowrap}.network-surface{background:radial-gradient(ellipse at 48% 50%,#203650,#0e1b2c 80%);border:1px solid #304c66;border-radius:14px;padding:3px;overflow:hidden}.network{display:block;width:100%;height:auto;max-height:390px;min-height:245px;overflow:visible}.edge-line{fill:none;stroke:#7fabc3;stroke-linecap:round;transition:stroke .2s,stroke-width .2s,opacity .2s;pointer-events:none}.edge-line.selected{stroke:var(--gold);filter:drop-shadow(0 0 4px #e9b951)}.edge-line.corrected{stroke:var(--coral);filter:drop-shadow(0 0 6px #fb937ea0)}.edge-pulse{fill:none;stroke:#d7fafa;stroke-opacity:.62;stroke-width:2;stroke-linecap:round;stroke-dasharray:2 18;animation:dashflow 1.5s linear infinite;pointer-events:none}.edge-hit{fill:none;stroke:transparent;stroke-width:24px;cursor:pointer}.edge-target{fill:transparent;stroke:transparent;cursor:pointer}.node{fill:#1b3650;stroke:#6bacc8;stroke-width:2}.node.terminal-A{fill:#b58d37;stroke:#f4cb75}.node.terminal-B{fill:#237d75;stroke:#64dfbf}.node.terminal-C{fill:#3e6da7;stroke:#8ebbf7}.node-txt{fill:#e7f7ff;font-size:17px;text-anchor:middle;font-weight:800}.term-txt{font-size:18px}.mini-label{font-size:11px;fill:#b9ccdc}.edge-label{fill:#abc9d6;font-size:11px;font-weight:700;pointer-events:none}.network-legend{display:flex;gap:16px;align-items:center;flex-wrap:wrap;color:#a8bfce;font-size:11px;margin:11px 1px 0}.legend-line{display:inline-block;width:24px;height:5px;border-radius:5px;background:#85a9c8;vertical-align:middle;margin-right:5px}.legend-line.gold{background:var(--gold)}.legend-line.coral{background:var(--coral)}
+.control{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}.control-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.control-header h3{font-size:15px;margin:0}.value{color:#ffe0a2;font-weight:850;font-size:20px;font-variant-numeric:tabular-nums}.slider{width:100%;height:8px;accent-color:#62cfc1;cursor:pointer}.range-label{font-size:12px;color:#adc3d1;margin:9px 0 12px;line-height:1.6}.tiny-stats{display:flex;gap:10px;flex-wrap:wrap}.tiny-stat{flex:1;min-width:110px;border:1px solid #2d4960;border-radius:9px;padding:10px 12px;background:#192c3c}.tiny-stat span{display:block;font-size:11px;color:#a8bdcc;margin-bottom:5px}.tiny-stat strong{font-size:19px;font-variant-numeric:tabular-nums}.secondary{color:#d7ebf7;background:#1d3044;border:1px solid #4c6879;border-radius:10px;padding:10px 15px;font-weight:750;font-size:12px;min-height:38px}.secondary:hover{background:#294458}.inverse-intro{padding:15px;background:#192a3b;border:1px solid #365369;border-radius:12px;line-height:1.7}.inverse-intro p{font-size:13px;margin:0 0 10px;color:#c8d6e0}.changeBox{border:1px solid #9b6d4c;background:#4f352e50;border-radius:10px;padding:10px 13px;font-size:13px;margin:12px 0}.changeBox b{color:#ffd394}
+.method-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:10px}.method{font-size:12px;font-weight:850;padding:10px 1px;border-radius:9px;background:#1d2f42;border:1px solid #416073;color:#c7d9e7;min-height:39px}.method[aria-pressed="true"]{background:#1c716c;color:white;border-color:#83dfcc}.method-note{color:#b1c9d5;line-height:1.6;font-size:12px;min-height:35px;margin:10px 0 0}.result-summary{display:flex;gap:10px;margin:17px 0 21px}.result-summary>div{min-width:0;flex:1;background:#1b2d40;border:1px solid #385167;border-radius:10px;padding:10px}.result-summary span{display:block;color:#acc2d0;font-size:11px;margin-bottom:6px}.result-summary strong{font-size:25px;line-height:1.1;font-variant-numeric:tabular-nums}.result-summary em{font-weight:500;font-style:normal;font-size:13px;color:#b9cddd}.subhead{font-size:15px;margin:15px 0 10px}.legend{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 16px;font-size:11px;color:#c6d5e0}.key{width:11px;height:11px;border-radius:3px;display:inline-block;vertical-align:middle;margin-right:5px}.glycan{margin:0 0 18px}.glycan-name{font-size:12px;font-weight:750;margin:0 0 5px;display:flex;justify-content:space-between}.bar-row{display:grid;grid-template-columns:41px 1fr 45px;gap:8px;align-items:center;margin:5px 0}.bar-row label{font-size:11px;color:#aebfce}.bar-row span{font-size:11px;color:#d7e6ef;text-align:right;font-variant-numeric:tabular-nums}.bartrack{height:11px;background:#273b4e;border-radius:5px;overflow:hidden}.barfill{height:100%;width:0;border-radius:5px;transition:width .28s ease}.bar-target{background:#9caaba}.bar-manual{background:#66badd}.bar-auto{background:#60d7b2}.gap-box{border:1px solid #3b6370;background:#16364580;padding:15px 14px;border-radius:12px;margin-top:10px}.gap-box .big{font-size:30px;font-weight:850;line-height:1.3;color:#f7cf83;font-variant-numeric:tabular-nums}.gap-box .small{font-size:12px;color:#c5d9df;line-height:1.6}.action{width:100%;margin-top:16px;background:linear-gradient(100deg,#45a99c,#286e87);border:1px solid #78dcd1;color:white;padding:14px;border-radius:11px;font-weight:850;font-size:14px}.action:hover{filter:brightness(1.1)}.research-note{margin-top:17px;border-top:1px solid #334a59;padding-top:13px;color:#a8c0ce;font-size:11px;line-height:1.7}.research-note details summary{cursor:pointer;color:#d4e6ee;font-weight:800}.research-note p{margin:8px 0 0}.footnote{font-size:12px;color:#bbccda;line-height:1.7;margin-top:17px}.error{color:#ffb7b7;font-size:12px;min-height:1em;margin-top:8px}.pill-ok{color:#94e4d2;font-size:11px}.skip{position:absolute;top:-60px;left:8px;background:#fff;color:#111;padding:8px}.skip:focus{top:5px}
+@keyframes dashflow{to{stroke-dashoffset:-40}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.panel{padding:16px}.network{min-height:0;max-height:none}.hero{align-items:flex-start}.guides{gap:6px}.guide{flex:1 1 170px}.mode{flex:1;padding:11px 8px}.bar-row{grid-template-columns:37px 1fr 44px}}
+@media(max-width:420px){main{padding:15px 10px 40px}.panel{padding:13px}.hero h1{font-size:23px}.guide{font-size:11px}.guide b{margin-right:3px}.tiny-stat strong{font-size:17px}.mode{font-size:12px}.result-summary strong{font-size:22px}}
+
+/* v3: 明るい研究展示用テーマ。元の操作・計算ロジックは変更しません。 */
+:root {
+  color-scheme: light;
+  --bg: #f5f8fc;
+  --panel: #ffffff;
+  --panel2: #eff6fa;
+  --line: #d9e4ed;
+  --muted: #5a7083;
+  --white: #183048;
+  --teal: #147f77;
+  --gold: #d18a17;
+  --blue: #377bbb;
+  --coral: #d86246;
+  --panel-shadow: 0 10px 34px rgba(29,64,99,.07);
+}
+body {
+  color: var(--white);
+  background: radial-gradient(ellipse 66% 65% at 2% -12%,#e7f5fb 0,transparent 69%),
+              radial-gradient(ellipse 58% 47% at 100% 102%,#eaf6f2 0,transparent 68%),var(--bg);
+}
+button:focus-visible,input:focus-visible,.edge-hit:focus-visible {outline:3px solid #bd7c09}
+a {color:#0d736a}
+.eyebrow {color:#167b75}
+.hero .desc {color:#52687b}
+.demoTag {color:#805619;background:#fff6e5;border:1px solid #ead6b1}
+.guide {border:1px solid #d8e8e8;background:#edf8f7;color:#245953}
+.guide b {background:#18887c;color:white}
+.mode {border-color:#cddde8;background:#edf3f8;color:#435b70}
+.mode[aria-pressed="true"] {background:#188477;border-color:#16796e;color:white;box-shadow:inset 0 0 0 1px #b6eee1}
+.panel {background:#fff;border:1px solid #dde7ee;box-shadow:var(--panel-shadow)}
+.small-note {color:#607789}
+.tag {color:#146b62;background:#e1f5ee}
+.network-surface {background:radial-gradient(ellipse at 55% 44%,#f9fdff,#eaf5fb 83%);border:1px solid #cbdde8}
+.edge-line {stroke:#6799b2}
+.edge-line.selected {stroke:#d79a2c;filter:drop-shadow(0 0 3px #eac780)}
+.edge-line.corrected {stroke:#d45e48;filter:drop-shadow(0 0 4px #eab5aa)}
+.edge-pulse {stroke:#effaff;stroke-opacity:.83}
+.node {fill:#386b87;stroke:#246e91}
+.node.terminal-A {fill:#bc8530;stroke:#8b621f}
+.node.terminal-B {fill:#21877b;stroke:#16695e}
+.node.terminal-C {fill:#497eb5;stroke:#32628e}
+.node-txt {fill:#ffffff}
+.mini-label {fill:#425e70}
+.edge-label {fill:#4d6c7b}
+.network-legend {color:#577080}
+.legend-line {background:#6799b2}
+.value {color:#98610c}
+.slider {accent-color:#158c7e}
+.range-label {color:#5d7385}
+.tiny-stat {border-color:#d9e5ed;background:#f5f9fc}
+.tiny-stat span {color:#647889}
+.secondary {color:#2e536b;background:#f1f6fa;border:1px solid #c7d8e5}
+.secondary:hover {background:#e5f0f7}
+.inverse-intro {background:#f3f9fd;border:1px solid #d8e5ee}
+.inverse-intro p {color:#506b7c}
+.changeBox {border:1px solid #efd7c6;background:#fff8f1}
+.changeBox b {color:#aa5c26}
+.method {background:#f1f6fa;border:1px solid #cbdce7;color:#38556a}
+.method[aria-pressed="true"] {background:#188477;color:white;border-color:#16796e}
+.method-note {color:#536e7f}
+.result-summary>div {background:#f5f9fc;border-color:#d9e5ed}
+.result-summary span {color:#5f7889}
+.result-summary em {color:#5b7284}
+.legend {color:#526a7b}
+.bar-row label {color:#536b7e}
+.bar-row span {color:#385b70}
+.bartrack {background:#e7eef4}
+.bar-target {background:#92a0b0}
+.bar-manual {background:#418ec1}
+.bar-auto {background:#2b9f89}
+.gap-box {border-color:#c7e6df;background:#ecf8f5}
+.gap-box .big {color:#a86e12}
+.gap-box .small {color:#476b68}
+.action {background:linear-gradient(105deg,#239a88,#267a9c);border:1px solid #1e7e7b;color:white}
+.action:hover {filter:brightness(1.06)}
+.research-note {border-top-color:#dce8ed;color:#587183}
+.research-note details summary {color:#31566c}
+.footnote {color:#5c7486}
+.error {color:#bd3838}
+.pill-ok {color:#147f77}
+
+
+/* v4: 操作の次の一手と変化量を伝える控えめなガイド */
+.first-tip {display:flex;flex-direction:column;gap:4px;background:#fff9e9;border:1px solid #f0deb4;border-radius:11px;padding:11px 13px;margin-bottom:12px;line-height:1.45}
+.first-tip strong {font-size:13px;color:#78510f}
+.first-tip span {font-size:12px;color:#766548}
+.method-prompt {font-size:11px;line-height:1.65;color:#476b72;margin:2px 0 0;padding:8px 10px;border-left:3px solid #60b5ad;background:#f0f9f7;border-radius:0 7px 7px 0}
+.change-feedback {margin:10px 0 0;padding:8px 10px;border:1px solid #cbdde7;border-radius:8px;background:#ffffff;font-size:12px;font-weight:700;color:#425d70;line-height:1.5}
+.change-feedback.better {color:#0b7663;border-color:#9cd6c7;background:#eefaf5}
+.change-feedback.worse {color:#9a5d16;border-color:#edcf9d;background:#fff9ed}
+.change-feedback.same {color:#526b7e}
+.inverse-nudge {display:flex;flex-direction:column;gap:4px;margin:17px 0 0;padding:0 3px}
+.inverse-nudge strong {font-size:13px;color:#264c5d}
+.inverse-nudge span {font-size:12px;line-height:1.55;color:#526c7a}
+.cta-footnote {font-size:11px;color:#5c7282;line-height:1.6;margin:7px 0 2px}
+.inverse-nudge+.action {margin-top:10px}
+@media(max-width:420px){.first-tip{padding:10px}.inverse-nudge{margin-top:14px}}
+
+
+/* v5: スライダーの基準値表示と、同一容量条件での4手法比較 */
+.range-ticks {display:flex;justify-content:space-between;gap:5px;font-size:11px;color:#536c7d;font-weight:700;margin:4px 0 5px;line-height:1.4}
+.range-ticks span:nth-child(2){text-align:center}
+.range-ticks span:last-child{text-align:right}
+.compare-button {display:block;width:100%;border-radius:10px;border:1px solid #8dc8be;background:#e9f7f3;color:#126b62;padding:11px 12px;font-weight:800;font-size:12px;margin:13px 0 0;line-height:1.55}
+.compare-button:hover,.compare-button[aria-expanded="true"] {background:#d6f0e8;border-color:#59ad9b}
+.compare-panel {background:#f7fbfd;border:1px solid #d5e7ef;border-radius:12px;padding:13px;margin:9px 0 0}
+.compare-panel h3 {font-size:14px;color:#23435b;margin:0 0 7px}
+.compare-hint,.compare-caution {font-size:11px;line-height:1.65;color:#5b7080;margin:0 0 10px}
+.compare-caution {margin:12px 0 0}
+.compare-legend{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 11px;font-size:11px;color:#456272}
+.compare-key{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+.compare-A{background:#cb9440}.compare-B{background:#218a7b}.compare-C{background:#598fc3}
+.compare-item{display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:10px;row-gap:2px;align-items:center;margin:12px 0}
+.compare-item-name{font-weight:800;font-size:12px;color:#254e63}
+.compare-stack{height:15px;display:flex;overflow:hidden;border-radius:5px;background:#e1eaf0}
+.compare-segment{height:100%;min-width:0;transition:width .2s ease}
+.compare-values{grid-column:2;display:flex;justify-content:space-between;gap:4px;font-variant-numeric:tabular-nums;font-size:10px;color:#536c7d}
+@media(max-width:420px){.compare-panel{padding:10px}.range-ticks{font-size:10px}.compare-values{font-size:9px}}
+
+
+/* v6: デスクトップForwardを一画面で操作するコンパクトレイアウト。
+   モバイル/小画面では通常の縦スクロールを維持。 */
+@media (min-width:1100px) and (min-height:700px) {
+  body.forward-screen {background:#f5f8fc;}
+  body.forward-screen main {max-width:1480px;padding:10px 18px 6px;}
+  body.forward-screen .hero {align-items:center;gap:8px}
+  body.forward-screen .hero .eyebrow {margin:0 0 2px;font-size:9px;letter-spacing:.11em}
+  body.forward-screen .hero h1 {font-size:22px;line-height:1.14;margin:0 0 2px}
+  body.forward-screen .hero .desc {font-size:11px;line-height:1.35}
+  body.forward-screen .demoTag {font-size:10px;padding:6px 10px}
+  body.forward-screen .guides {margin:6px 0;gap:6px}
+  body.forward-screen .guide {font-size:10px;padding:3px 9px;border-radius:7px;line-height:1.3}
+  body.forward-screen .guide b {width:17px;height:17px;margin-right:5px}
+  body.forward-screen .modebar {margin:6px 0 8px;gap:6px}
+  body.forward-screen .mode {min-height:34px;padding:6px 15px;font-size:12px}
+  body.forward-screen .grid {grid-template-columns:minmax(0,1.35fr) minmax(405px,.95fr);gap:11px}
+  body.forward-screen .panel {padding:11px 13px;border-radius:14px;box-shadow:0 3px 24px rgba(34,75,95,.06)}
+  body.forward-screen .section-head {margin-bottom:6px}
+  body.forward-screen .section-head h2 {font-size:13px}
+  body.forward-screen .tag {font-size:10px;padding:3px 7px}
+  body.forward-screen .first-tip {padding:6px 9px;margin-bottom:7px;gap:1px;border-radius:8px}
+  body.forward-screen .first-tip strong {font-size:11px}
+  body.forward-screen .first-tip span {font-size:10px}
+  body.forward-screen .network-surface {height:clamp(230px,32.4dvh,350px);padding:0;border-radius:10px}
+  body.forward-screen .network {height:100%;min-height:0;max-height:none;width:100%}
+  body.forward-screen .network-legend {margin:5px 1px 0;font-size:10px;gap:10px}
+  body.forward-screen .legend-line {width:18px;height:4px}
+  body.forward-screen .control {margin-top:7px;padding-top:7px}
+  body.forward-screen .control-header {margin-bottom:2px}
+  body.forward-screen .control-header h3 {font-size:13px}
+  body.forward-screen .control-header .value {font-size:18px}
+  body.forward-screen .slider {height:6px;margin:2px 0}
+  body.forward-screen .range-ticks {font-size:10px;margin:1px 0}
+  body.forward-screen .range-label {font-size:10px;margin:4px 0 6px;line-height:1.45}
+  body.forward-screen .tiny-stats {gap:7px}
+  body.forward-screen .tiny-stat {padding:5px 8px;min-width:110px}
+  body.forward-screen .tiny-stat span {margin:0;font-size:9px}
+  body.forward-screen .tiny-stat strong {font-size:15px}
+  body.forward-screen .tiny-stats .secondary {min-height:35px;padding:6px 11px}
+  body.forward-screen .method-grid {margin-top:4px;gap:5px}
+  body.forward-screen .method {min-height:32px;padding:6px 1px}
+  body.forward-screen .method-note {min-height:0;margin:4px 0 0;font-size:10px;line-height:1.4}
+  body.forward-screen .method-prompt {font-size:10px;line-height:1.35;padding:5px 8px;margin:5px 0 0}
+  body.forward-screen .compare-button {margin:7px 0 0;padding:6px 10px;font-size:11px;line-height:1.4}
+  body.forward-screen #methodsArea {position:relative}
+  body.forward-screen .compare-panel {position:absolute;top:100%;left:0;width:100%;max-height:min(460px,68dvh);overflow:auto;z-index:12;background:#fff;box-shadow:0 15px 38px rgba(26,76,96,.23);border-color:#9dccd3;margin:5px 0 0}
+  body.forward-screen .compare-item {margin:8px 0}
+  body.forward-screen .result-summary {gap:7px;margin:9px 0 10px}
+  body.forward-screen .result-summary>div {padding:7px 9px}
+  body.forward-screen .result-summary span {font-size:10px;margin-bottom:2px}
+  body.forward-screen .result-summary strong {font-size:23px}
+  body.forward-screen .subhead {font-size:13px;margin:7px 0 5px}
+  body.forward-screen .legend {gap:10px;margin:5px 0 6px;font-size:10px}
+  body.forward-screen .glycan {margin:0 0 8px}
+  body.forward-screen .glycan-name {font-size:11px;margin:0 0 2px}
+  body.forward-screen .bar-row {margin:2px 0;gap:5px;grid-template-columns:35px 1fr 42px}
+  body.forward-screen .bar-row label,body.forward-screen .bar-row span {font-size:10px}
+  body.forward-screen .bartrack {height:9px}
+  body.forward-screen .gap-box {margin-top:5px;padding:3px 6px;border:none;background:transparent}
+  body.forward-screen .gap-box > .small,body.forward-screen .gap-box > .big {display:none}
+  body.forward-screen .change-feedback {margin:0;padding:5px 8px;font-size:10px;line-height:1.3;border-radius:7px}
+  body.forward-screen .inverse-nudge {margin:5px 0 0;gap:0;padding:0 1px}
+  body.forward-screen .inverse-nudge strong {font-size:11px;line-height:1.35}
+  body.forward-screen .inverse-nudge span {font-size:10px;line-height:1.35}
+  body.forward-screen .inverse-nudge + .action {margin-top:5px}
+  body.forward-screen .action {min-height:32px;margin-top:6px;padding:7px;font-size:11px}
+  body.forward-screen .cta-footnote {margin:3px 0 0;font-size:9px;line-height:1.3}
+  body.forward-screen .research-note {margin-top:6px;padding-top:5px;font-size:9px;line-height:1.4}
+  body.forward-screen .research-note p {margin:3px 0 0}
+  body.forward-screen .footnote {display:none}
+  body.forward-screen #status:empty {display:none}
+}
+@media (min-width:1100px) and (min-height:700px) and (max-height:760px) {
+  body.forward-screen .method-prompt {display:none}
+  body.forward-screen .network-surface {height:clamp(218px,31.7dvh,230px)}
+  body.forward-screen .inverse-nudge span {display:none}
+  body.forward-screen .research-note>p {display:none}
+}
+@media (max-width:1099px), (max-height:699px) {
+  .compare-panel {max-height:68dvh;overflow-y:auto}
+}
+
+
+/* v7: Inverseは「なぜ→何を補正→どう再現」の順で見せる（ライトテーマ） */
+.inverse-intro{padding:17px;background:#f6fafc;border:1px solid #cfe3ed;border-radius:13px}
+.inverse-intro .inverse-lead{font-size:15px;font-weight:850;color:#224d64;margin:0 0 6px}
+.inverse-intro #inverseMessage{font-size:12px;line-height:1.65;color:#617785;margin-bottom:13px}
+.inverse-step{border-radius:11px;padding:13px 14px;margin:10px 0 12px;background:white;border:1px solid #d9e8ed}
+.inverse-step h3{margin:0 0 9px;display:flex;align-items:center;gap:8px;color:#245367;font-size:14px;line-height:1.5}
+.inverse-stepnum{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;background:#2c9686;color:#fff;border-radius:50%;font-size:12px;font-weight:900}
+.inverse-step p{color:#536f7d;font-size:12px;line-height:1.7;margin:8px 0 0}
+.inverse-step p strong{color:#234b62;font-weight:850}
+.inverse-equation{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:5px;border:1px solid #d8e8e8;border-radius:9px;padding:11px 10px;background:#eff8f6;font-size:12px;font-variant-numeric:tabular-nums;color:#3a6470}
+.inverse-equation b{color:#255b65}
+.inverse-equation-sign{font-weight:850;color:#7b96a1}
+.inverse-equation>strong{font-size:17px;color:#177b6d;white-space:nowrap}
+.inverse-intro #autoCorrect{margin-top:9px}
+.inverse-capacity{border-color:#b9ded5;background:#f8fffc}
+.inverse-cap-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:7px 0 10px;font-size:13px;color:#244d62}
+.inverse-cap-delta{color:#b15e34;font-size:12px;font-weight:800;background:#fff2e8;padding:4px 8px;border-radius:999px;white-space:nowrap}
+.inverse-cap-row{display:grid;grid-template-columns:51px minmax(0,1fr) 35px;gap:10px;align-items:center;margin:8px 0;font-size:12px;color:#4d6d7c}
+.inverse-cap-row>strong{text-align:right;color:#214b62;font-variant-numeric:tabular-nums;font-size:16px}
+.inverse-cap-track{background:#e5edf2;border-radius:999px;overflow:hidden;height:14px}
+.inverse-cap-track i{display:block;height:100%;width:0;background:#88aabc;transition:width .3s ease;border-radius:999px}
+.inverse-cap-track i.corrected{background:#d77a50}
+.inverse-step p.inverse-no-other{color:#567b73;font-size:11px;font-weight:750;margin-top:10px}
+.inverse-fixture-note{font-size:11px;line-height:1.65}
+.inverse-result-note{display:flex;flex-direction:column;gap:5px;background:#eaf8f2;border:1px solid #b4dfce;border-radius:11px;padding:12px 14px;color:#225a4b;line-height:1.6;margin:-1px 0 13px}
+.inverse-result-note>strong{font-size:13px;color:#177260}
+.inverse-step3-heading{display:flex;gap:8px;align-items:center}
+.inverse-result-note>span{font-size:11px}
+.inverse-result-note b{font-weight:850}
+body:not(.forward-screen) .network-legend{margin-bottom:12px}
+body:not(.forward-screen) .result-summary{margin:14px 0 16px}
+body:not(.forward-screen) .glycan{margin-bottom:13px}
+body:not(.forward-screen) .gap-box{padding:11px 13px;margin-top:8px}
+@media(max-width:420px){.inverse-intro{padding:11px}.inverse-step{padding:10px}.inverse-equation{font-size:11px;gap:3px}.inverse-equation>strong{font-size:15px}.inverse-cap-row{gap:6px}}
+
+</style>
+</head>
+<body>
+<a href="#simulator" class="skip">シミュレーターへ移動</a>
+<main id="simulator">
+  <header class="hero"><div><p class="eyebrow">GLYCAN FLOW · INTERACTIVE DEMO</p><h1>糖鎖の流れを、変えてみよう！</h1><p class="desc">線を操作すると、糖鎖A・B・Cの生成割合が変わります。目標にどこまで近づけられるでしょうか？</p></div><span class="demoTag">研究のしくみを紹介する架空の例</span></header>
+  <div class="guides" aria-label="操作の流れ"><span class="guide"><b>1</b>黄色い線を選ぶ</span><span class="guide"><b>2</b>容量を動かす</span><span class="guide"><b>3</b>4手法を比べる</span><span class="guide"><b>4</b>目標との差を見る</span></div>
+  <nav class="modebar" aria-label="計算モード"><button id="forwardTab" class="mode" type="button" aria-pressed="true">自分で挑戦（Forward）</button><button id="inverseTab" class="mode" type="button" aria-pressed="false">自動補正を試す（Inverse）</button></nav>
+  <div class="grid">
+    <section class="panel" aria-label="糖鎖ネットワークと反応容量">
+      <div class="section-head"><h2>糖鎖ネットワーク</h2><span class="tag" id="networkState">手動操作中</span></div>
+      <div class="first-tip" id="firstTip"><strong id="firstTipTitle">💡 まず黄色い線 E13 の容量を増やしてみよう！</strong><span id="firstTipDetail">100%から150%に動かすと、目標に少し近づきます。</span></div>
+      <div class="network-surface"><svg class="network" id="network" viewBox="35 145 950 360" role="img" aria-label="クリックできる13本の反応エッジと3種類の終端糖鎖からなる説明用ネットワーク"></svg></div>
+      <div class="network-legend"><span><i class="legend-line gold"></i>選択中</span><span><i class="legend-line"></i>線が太いほど流量が多い</span><span id="inverseLegend" hidden><i class="legend-line coral"></i>容量を補正した反応</span></div>
+      <div class="control" id="forwardControl"><div class="control-header"><h3 id="selectedEdgeLabel">線を選んで調整しよう</h3><strong class="value" id="capacityPercentage">100%</strong></div><input class="slider" type="range" min="0" max="200" value="100" step="1" id="capacitySlider" aria-label="選択中のエッジの基準容量に対する割合"><div class="range-ticks" aria-hidden="true"><span>0%（停止）</span><span>100%（基準）</span><span>200%（2倍）</span></div><p class="range-label">この値は初期容量に対する倍率です。容量を仮想的に変更する説明用シミュレーションです。</p><div class="tiny-stats"><div class="tiny-stat"><span>この反応の容量</span><strong id="selectedCapacity">—</strong></div><div class="tiny-stat"><span>この反応を流れる量</span><strong id="selectedFlow">—</strong></div><button class="secondary" type="button" id="reset">↻ リセット</button></div></div>
+      <div class="control" id="inverseControl" hidden>
+        <div class="inverse-intro">
+          <p class="inverse-lead">目標の割合から、必要な反応容量を逆算</p>
+          <p id="inverseMessage">基準容量からの変更をできるだけ小さくし、目標分布を再現できる流量を求める例です。</p>
+          <div class="inverse-step inverse-reason">
+            <h3><span class="inverse-stepnum">1</span>なぜ反応 E13 を変えるの？</h3>
+            <p>糖鎖Cを目標の <strong id="inverseTargetPercentC">55%</strong> 生成したいとします。</p>
+            <div class="inverse-equation"><span>最大流量 <b id="inverseTotalSupply">120</b></span><span class="inverse-equation-sign">×</span><span><b id="inverseTargetPctMath">55%</b></span><span class="inverse-equation-sign">=</span><strong><span id="inverseRequiredC">66</span> 必要</strong></div>
+            <p>ところが、糖鎖Cに入る唯一の反応 E13 の基準容量は <strong id="inverseBaselineE13">58</strong>。このままでは66の流量を通せません。</p>
+          </div>
+          <button type="button" class="action" id="autoCorrect">✨ Inverseで求めた補正例を見る</button>
+          <div class="inverse-step inverse-capacity" id="capacityChange" hidden>
+            <h3><span class="inverse-stepnum">2</span>最適化で変わった容量</h3>
+            <div class="inverse-cap-heading"><strong>反応 E13</strong><span class="inverse-cap-delta" id="inverseDeltaCapacity">+8（+13.8%）</span></div>
+            <div class="inverse-cap-row"><span>補正前</span><div class="inverse-cap-track"><i id="inverseCapBeforeBar"></i></div><strong id="inverseCapBefore">58</strong></div>
+            <div class="inverse-cap-row"><span>補正後</span><div class="inverse-cap-track"><i class="corrected" id="inverseCapAfterBar"></i></div><strong id="inverseCapAfter">66</strong></div>
+            <p class="inverse-no-other">ほかの12本の反応容量は変更していません。</p>
+          </div>
+          <button type="button" class="secondary" id="backBefore" hidden>↻ 補正前の表示に戻す</button>
+        </div>
+        <p class="range-label inverse-fixture-note">※手動の調整結果から計算するのではなく、初期容量について事前に最適化・検証した結果を表示しています。数値はすべて説明用の架空の例です。</p>
+      </div>
+    </section>
+    <section class="panel" aria-label="最適化と生成割合の比較">
+      <div id="methodsArea"><div class="section-head"><h2>計算方法を選んでみよう</h2><span class="small-note">現在の容量で計算</span></div><div class="method-grid" id="methods"><button class="method" type="button" data-method="UQ" aria-pressed="false">UQ</button><button class="method" type="button" data-method="CWQ" aria-pressed="true">CWQ</button><button class="method" type="button" data-method="SU" aria-pressed="false">SU</button><button class="method" type="button" data-method="LCRQ" aria-pressed="false">LCRQ</button></div><p class="method-note" id="methodDescription"></p><p class="method-prompt" id="methodPrompt">最初は容量を動かしてみよう。あとで手法を変えると、同じ容量でも結果が変わります。</p><button type="button" class="compare-button" id="compareMethods" aria-expanded="false" aria-controls="methodComparison">４手法を同じ初期容量で比較する</button><section id="methodComparison" class="compare-panel" hidden aria-label="初期容量での４手法比較"><h3>同じ容量でも、流れ方が変わる</h3><p class="compare-hint">すべての線を初期値100%にした条件で比較しています。手動で変えた容量や選択中の手法は変わりません。</p><div class="compare-legend"><span><i class="compare-key compare-A"></i>糖鎖A</span><span><i class="compare-key compare-B"></i>糖鎖B</span><span><i class="compare-key compare-C"></i>糖鎖C</span></div><div id="comparisonResults"></div><p class="compare-caution">※架空のネットワークでの計算結果です。「どの手法が優れているか」の順位ではなく、配分の違いを示します。</p></section></div>
+      <div id="inverseHeading" hidden><div class="section-head"><h2>目標の割合を再現できた？</h2><span class="tag">Inverse</span></div><p class="method-note">青は手動での予測、緑はInverseが求めた再現可能な流量です。灰色の目標と比べてみましょう。</p></div>
+      <div class="result-summary"><div><span>最大流量</span><strong id="totalFlow">—</strong></div><div><span id="modeCaption">手動と目標のズレ</span><strong id="gapHeadline">—</strong><em id="gapUnit"> pt</em></div></div>
+      <h2 class="subhead">目標と糖鎖の生成割合</h2>
+      <div class="legend"><span><i class="key bar-target"></i>目標（固定）</span><span><i class="key bar-manual"></i>自分の予測</span><span id="inverseKey" hidden><i class="key bar-auto"></i>自動補正</span></div>
+      <div id="distribution"></div>
+      <div class="inverse-result-note" id="inverseResultNote" hidden role="status"><strong class="inverse-step3-heading"><span class="inverse-stepnum">3</span>目標分布を再現できました！</strong><span>糖鎖Cに必要な <b id="inverseResultRequiredC">66</b> の流量を通せるよう、E13の容量を補正しました。<b>最大流量 <span id="inverseResultTotalFlow">120</span> は維持</b>しています。</span></div>
+      <div class="gap-box"><div class="small" id="gapHeading">目標まであと</div><div class="big" id="gapNumber">—</div><div class="small" id="gapDescription">小さいほど目標の糖鎖分布に近いことを表します。</div><p class="change-feedback" id="changeFeedback" role="status" aria-live="polite">まずは黄色い線を動かしてみましょう！</p></div>
+      <div class="inverse-nudge" id="inverseNudge"><strong>目標の糖鎖分布を再現するには、どの反応容量を変えればいい？</strong><span>Inverseでは、目標分布から必要な容量の補正を数理最適化で求めます。</span></div>
+      <button type="button" id="toInverse" class="action">✨ Inverseで容量を逆算してみる</button>
+      <p class="cta-footnote" id="inverseNudgeFoot">※自動補正は手動設定からではなく、基準容量から計算した比較用の例です。</p>
+      <button type="button" id="toForward" class="secondary" style="width:100%;margin-top:15px" hidden>← 手動操作に戻る</button>
+      <div class="research-note"><details><summary>このアプリと研究の関係</summary><p>丸は生成途中の糖鎖、線は反応を表す模式ネットワークです。Forwardでは最大フローを求め、UQ/CWQ/SU/LCRQの4つの目的関数で流量を配分します。Inverseでは、固定した目標分布を再現するよう反応容量を最小限変更した、別の最大フロー解を表示します。Inverseで得られた流量と、補正容量をForwardの4手法に再入力した場合の流量は同一とは限りません。</p></details><p>※ネットワーク・目標分布は架空の例です（実測値ではありません）。Forwardの4手法は目標誤差を最小化しません。</p></div>
+      <div id="status" class="error" role="status" aria-live="polite"></div>
+    </section>
+  </div>
+  <p class="footnote">本サイトはForward・Inverseの数理最適化を紹介する独立した教育用デモです。容量・目標分布は架空の値であり、実測データによる予測ではありません。</p>
+</main>
+<!-- SOLVER_AND_FIXTURE -->
+<!-- UI_LOGIC -->
+</body>
+</html>
