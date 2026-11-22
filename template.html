@@ -254,6 +254,85 @@ body:not(.forward-screen) .glycan{margin-bottom:13px}
 body:not(.forward-screen) .gap-box{padding:11px 13px;margin-top:8px}
 @media(max-width:420px){.inverse-intro{padding:11px}.inverse-step{padding:10px}.inverse-equation{font-size:11px;gap:3px}.inverse-equation>strong{font-size:15px}.inverse-cap-row{gap:6px}}
 
+
+/* v8: 強い差が出る正しい数理条件の比較と、質量分析→Inverseの概念図 */
+.compare-mode-buttons{display:flex;gap:7px;margin:8px 0 10px;flex-wrap:wrap}
+.compare-mode{flex:1;min-width:130px;background:#edf4f8;border:1px solid #c9dce5;border-radius:8px;padding:7px 8px;color:#335c6d;font-size:11px;font-weight:800}
+.compare-mode[aria-pressed="true"]{background:#167f74;color:white;border-color:#167f74}
+.compare-highlight{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:10px 12px;background:#fff7e7;border:1px solid #efdbb8;border-radius:9px;margin:10px 0;font-size:11px;color:#79561d}
+.compare-highlight strong{font-size:16px;color:#925c0e;font-variant-numeric:tabular-nums}
+.compare-panel{max-height:min(590px,75dvh);overflow:auto}
+@media (min-width:1100px) and (min-height:700px){body.forward-screen .compare-panel{max-height:min(520px,calc(100dvh - 355px));}}
+.compare-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
+.compare-actions button{flex:1;min-width:125px;padding:8px;border:1px solid #b8d8d7;border-radius:7px;font-size:11px;font-weight:850;line-height:1.4}
+.compare-apply{background:#1d8a7e;color:#fff}
+.compare-restore{background:#f0f7fa;color:#345d6a}
+
+.observation-flow{display:flex;align-items:stretch;gap:4px;margin:11px 0 14px}
+.observation-card{flex:1;min-width:0;background:#fff;border:1px solid #d8e5ef;border-radius:9px;padding:10px 7px;display:flex;align-items:center;flex-direction:column;justify-content:space-between;gap:7px;text-align:center}
+.observation-card strong{font-size:11px;line-height:1.4;color:#254f65}
+.observation-card small{font-size:9px;line-height:1.45;color:#657988}
+.observation-arrow{display:flex;align-items:center;justify-content:center;color:#138778;font-size:19px;font-weight:900;flex-shrink:0}
+.mini-spectrum{display:flex;height:38px;align-items:flex-end;justify-content:center;gap:5px;width:100%;padding:2px 6px 0;border-bottom:2px solid #b7cfdc}
+.mini-spectrum i{display:block;background:linear-gradient(#228caa,#75bac9);width:4px;min-width:3px;border-radius:3px 3px 0 0}
+.mini-observed{display:flex;align-items:stretch;border-radius:5px;overflow:hidden;color:#fff;width:100%;min-height:28px}
+.mini-observed i{display:flex;align-items:center;justify-content:center;font-style:normal;font-size:9px;font-weight:800;white-space:nowrap}
+.mini-observed i:nth-child(1){width:25%;background:#c18a3c}
+.mini-observed i:nth-child(2){width:20%;background:#218a7b}
+.mini-observed i:nth-child(3){width:55%;background:#5185bc}
+.observation-card-goal{background:#ecf8f3;border-color:#a9d9ca}
+.observation-reaction{color:#176e62;font-size:11px;line-height:1.55}
+.observation-reaction b{font-weight:850}
+.inverse-example-disclaimer{color:#536b7a;font-size:11px;line-height:1.65;background:#f0f8fb;border-left:3px solid #59a9bd;padding:7px 9px;margin:9px 0 8px}
+.inverse-example-disclaimer strong{color:#245a6b}
+@media(max-width:480px){.observation-flow{flex-wrap:wrap;gap:4px}.observation-card{min-width:110px;padding:9px 6px}.observation-arrow{font-size:15px}.observation-card strong{font-size:10px}.mini-observed i{font-size:8px}.compare-highlight{flex-wrap:wrap}.compare-highlight strong{font-size:14px}}
+
+/* v9 · 説明を減らし、方法切り替えと観測分布の変化を主役に */
+.edge-line{transition:stroke .35s,stroke-width .7s cubic-bezier(.2,.7,.3,1),opacity .45s}
+.barfill{transition:width .7s cubic-bezier(.2,.7,.3,1)}
+.method-actions{display:flex;align-items:stretch;gap:7px;margin-top:9px}
+.method-actions button{border-radius:9px;font-size:11px;font-weight:850;line-height:1.25;min-height:40px;padding:7px 9px}
+.method-actions .play-methods{flex:1.5;background:linear-gradient(110deg,#158978,#267c9a);border:1px solid #147d75;color:white}
+.method-actions .play-methods[aria-pressed="true"]{background:#175e59;box-shadow:0 0 0 3px #ceeee4}
+.method-actions .compare-button{flex:0.55;width:auto;margin:0;background:#e9f5f4;color:#176b63}
+.method-actions .restore-methods{flex:0.7;background:#fff8eb;border:1px solid #e7c99f;color:#94621e}
+.play-status{font-size:11px;font-weight:750;color:#176e62;margin:5px 0 -2px}
+.inverse-playground{background:#f5fafc;border:1px solid #cde3e9;border-radius:13px;padding:15px}
+.inv-observed-title{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:5px;color:#264d62;font-size:14px;margin-bottom:10px}
+.inv-observed-title small{font-size:10px;color:#647c8b;font-weight:550}
+.inv-target-bar{height:35px;display:flex;border-radius:9px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,.1);color:white;font-size:11px;font-weight:850}
+.inv-target-bar span{display:flex;align-items:center;justify-content:center;white-space:nowrap}
+.inv-target-bar .inv-a{background:#bf8936}.inv-target-bar .inv-b{background:#2c8a7b}.inv-target-bar .inv-c{background:#4b83bd}
+.inv-cap-mini{margin:19px 0 9px;padding:12px 12px 10px;background:white;border:1px solid #dce9ef;border-radius:10px}
+.inv-cap-title{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:12px;color:#31586c}
+.inv-cap-title>div{display:flex;align-items:baseline;gap:7px}.inv-cap-title strong#inverseCapLive{font-size:25px;color:#94600f;font-variant-numeric:tabular-nums;transition:color .3s}
+.inv-cap-title strong#inverseCapLive.corrected{color:#138578}
+.inv-cap-title #inverseCapDelta{font-size:12px;color:#138578;font-weight:800}
+.inv-cap-visual{position:relative;height:14px;margin:11px 0 8px;border-radius:999px;background:#e5eef3;overflow:visible}
+.inv-cap-fill{display:block;height:100%;width:72.5%;background:#c4a36d;border-radius:999px;transition:width .9s cubic-bezier(.16,.8,.25,1),background .5s}
+.inv-cap-fill.corrected{background:#2c9b86}
+.inv-cap-mark{display:block;position:absolute;left:82.5%;top:-5px;height:23px;width:2px;background:#267f74;border-radius:2px}
+.inv-cap-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:5px;font-size:10px;color:#5e7685}
+.inverse-playground #autoCorrect{margin-top:13px}
+.inverse-quick-result{margin-top:11px;background:#e3f6ee;border:1px solid #a8ddcc;border-radius:9px;padding:10px 11px;display:flex;flex-wrap:wrap;gap:4px 11px;color:#196b59;line-height:1.5}
+.inverse-quick-result strong{font-size:14px}.inverse-quick-result span{font-size:11px}
+.inverse-playground #backBefore{margin-top:9px;width:100%}
+.inverse-why{font-size:11px;line-height:1.7;color:#577181;margin-top:10px;padding:0 3px}
+.inverse-why summary{cursor:pointer;color:#2b6176;font-weight:750}
+.inverse-why p{margin:6px 0 0}
+.inverse-result-note{margin:8px 0 6px;padding:9px 12px;gap:2px}
+.inverse-result-note>strong{font-size:13px}
+@media (min-width:1100px) and (min-height:700px){
+ body.forward-screen .method-actions{margin-top:7px;gap:6px}
+ body.forward-screen .method-actions button{min-height:31px;padding:6px 8px;font-size:10px}
+ body.forward-screen .play-status{font-size:9px;margin:3px 0 -2px}
+ body.forward-screen .method-note{display:none}
+}
+@media(max-width:480px){
+ .method-actions{flex-wrap:wrap}.method-actions .play-methods{flex:1 1 52%}.method-actions .compare-button{flex:1 1 26%}
+ .method-actions .restore-methods{flex:1 1 100%}
+ .inv-observed-title strong{font-size:12px}.inv-target-bar{height:32px;font-size:10px}
+}
 </style>
 </head>
 <body>
@@ -270,39 +349,36 @@ body:not(.forward-screen) .gap-box{padding:11px 13px;margin-top:8px}
       <div class="network-legend"><span><i class="legend-line gold"></i>選択中</span><span><i class="legend-line"></i>線が太いほど流量が多い</span><span id="inverseLegend" hidden><i class="legend-line coral"></i>容量を補正した反応</span></div>
       <div class="control" id="forwardControl"><div class="control-header"><h3 id="selectedEdgeLabel">線を選んで調整しよう</h3><strong class="value" id="capacityPercentage">100%</strong></div><input class="slider" type="range" min="0" max="200" value="100" step="1" id="capacitySlider" aria-label="選択中のエッジの基準容量に対する割合"><div class="range-ticks" aria-hidden="true"><span>0%（停止）</span><span>100%（基準）</span><span>200%（2倍）</span></div><p class="range-label">この値は初期容量に対する倍率です。容量を仮想的に変更する説明用シミュレーションです。</p><div class="tiny-stats"><div class="tiny-stat"><span>この反応の容量</span><strong id="selectedCapacity">—</strong></div><div class="tiny-stat"><span>この反応を流れる量</span><strong id="selectedFlow">—</strong></div><button class="secondary" type="button" id="reset">↻ リセット</button></div></div>
       <div class="control" id="inverseControl" hidden>
-        <div class="inverse-intro">
-          <p class="inverse-lead">目標の割合から、必要な反応容量を逆算</p>
-          <p id="inverseMessage">基準容量からの変更をできるだけ小さくし、目標分布を再現できる流量を求める例です。</p>
-          <div class="inverse-step inverse-reason">
-            <h3><span class="inverse-stepnum">1</span>なぜ反応 E13 を変えるの？</h3>
-            <p>糖鎖Cを目標の <strong id="inverseTargetPercentC">55%</strong> 生成したいとします。</p>
-            <div class="inverse-equation"><span>最大流量 <b id="inverseTotalSupply">120</b></span><span class="inverse-equation-sign">×</span><span><b id="inverseTargetPctMath">55%</b></span><span class="inverse-equation-sign">=</span><strong><span id="inverseRequiredC">66</span> 必要</strong></div>
-            <p>ところが、糖鎖Cに入る唯一の反応 E13 の基準容量は <strong id="inverseBaselineE13">58</strong>。このままでは66の流量を通せません。</p>
+        <div class="inverse-playground">
+          <div class="inv-observed-title"><strong>観測された糖鎖分布</strong><small>質量分析を想定した架空の例</small></div>
+          <div class="inv-target-bar" role="img" aria-label="架空の観測分布：糖鎖A25%、B20%、C55%">
+            <span class="inv-a" style="width:25%">A 25%</span><span class="inv-b" style="width:20%">B 20%</span><span class="inv-c" style="width:55%">C 55%</span>
           </div>
-          <button type="button" class="action" id="autoCorrect">✨ Inverseで求めた補正例を見る</button>
-          <div class="inverse-step inverse-capacity" id="capacityChange" hidden>
-            <h3><span class="inverse-stepnum">2</span>最適化で変わった容量</h3>
-            <div class="inverse-cap-heading"><strong>反応 E13</strong><span class="inverse-cap-delta" id="inverseDeltaCapacity">+8（+13.8%）</span></div>
-            <div class="inverse-cap-row"><span>補正前</span><div class="inverse-cap-track"><i id="inverseCapBeforeBar"></i></div><strong id="inverseCapBefore">58</strong></div>
-            <div class="inverse-cap-row"><span>補正後</span><div class="inverse-cap-track"><i class="corrected" id="inverseCapAfterBar"></i></div><strong id="inverseCapAfter">66</strong></div>
-            <p class="inverse-no-other">ほかの12本の反応容量は変更していません。</p>
+          <div class="inv-cap-mini">
+            <div class="inv-cap-title"><strong>反応 E13 の容量</strong><div><strong id="inverseCapLive">58</strong><span id="inverseCapDelta" hidden>+8</span></div></div>
+            <div class="inv-cap-visual"><span class="inv-cap-fill" id="inverseCapLiveBar"></span><i class="inv-cap-mark" aria-label="必要な容量66"></i></div>
+            <div class="inv-cap-foot"><span>もとの容量：58</span><span>糖鎖Cに必要：66</span></div>
           </div>
-          <button type="button" class="secondary" id="backBefore" hidden>↻ 補正前の表示に戻す</button>
+          <button type="button" class="action" id="autoCorrect">▶ 観測分布に合う容量を逆算</button>
+          <div class="inverse-quick-result" id="capacityChange" hidden role="status">
+            <strong>✓ E13：58 → 66</strong><span>これで観測分布を再現できる流量が見つかりました！</span>
+          </div>
+          <button type="button" class="secondary" id="backBefore" hidden>↻ 補正前に戻す</button>
         </div>
-        <p class="range-label inverse-fixture-note">※手動の調整結果から計算するのではなく、初期容量について事前に最適化・検証した結果を表示しています。数値はすべて説明用の架空の例です。</p>
+        <details class="inverse-why"><summary>なぜE13の容量を増やすの？</summary><p>糖鎖Cの観測割合55%を、最大流量120で再現するには66の流量が必要です。Cへの唯一の反応E13の基準容量は58なので、66まで増やします。</p><p>この画面は、基準容量からの変更量を最小にした<strong>事前計算済みの例</strong>です。手動設定からその場で逆算しているわけではありません。</p></details>
       </div>
     </section>
     <section class="panel" aria-label="最適化と生成割合の比較">
-      <div id="methodsArea"><div class="section-head"><h2>計算方法を選んでみよう</h2><span class="small-note">現在の容量で計算</span></div><div class="method-grid" id="methods"><button class="method" type="button" data-method="UQ" aria-pressed="false">UQ</button><button class="method" type="button" data-method="CWQ" aria-pressed="true">CWQ</button><button class="method" type="button" data-method="SU" aria-pressed="false">SU</button><button class="method" type="button" data-method="LCRQ" aria-pressed="false">LCRQ</button></div><p class="method-note" id="methodDescription"></p><p class="method-prompt" id="methodPrompt">最初は容量を動かしてみよう。あとで手法を変えると、同じ容量でも結果が変わります。</p><button type="button" class="compare-button" id="compareMethods" aria-expanded="false" aria-controls="methodComparison">４手法を同じ初期容量で比較する</button><section id="methodComparison" class="compare-panel" hidden aria-label="初期容量での４手法比較"><h3>同じ容量でも、流れ方が変わる</h3><p class="compare-hint">すべての線を初期値100%にした条件で比較しています。手動で変えた容量や選択中の手法は変わりません。</p><div class="compare-legend"><span><i class="compare-key compare-A"></i>糖鎖A</span><span><i class="compare-key compare-B"></i>糖鎖B</span><span><i class="compare-key compare-C"></i>糖鎖C</span></div><div id="comparisonResults"></div><p class="compare-caution">※架空のネットワークでの計算結果です。「どの手法が優れているか」の順位ではなく、配分の違いを示します。</p></section></div>
-      <div id="inverseHeading" hidden><div class="section-head"><h2>目標の割合を再現できた？</h2><span class="tag">Inverse</span></div><p class="method-note">青は手動での予測、緑はInverseが求めた再現可能な流量です。灰色の目標と比べてみましょう。</p></div>
+      <div id="methodsArea"><div class="section-head"><h2>計算方法を選んでみよう</h2><span class="small-note">現在の容量で計算</span></div><div class="method-grid" id="methods"><button class="method" type="button" data-method="UQ" aria-pressed="false">UQ</button><button class="method" type="button" data-method="CWQ" aria-pressed="true">CWQ</button><button class="method" type="button" data-method="SU" aria-pressed="false">SU</button><button class="method" type="button" data-method="LCRQ" aria-pressed="false">LCRQ</button></div><p class="method-note" id="methodDescription"></p><p class="method-prompt" id="methodPrompt">容量を変えたら、4手法を切り替えてみよう。</p><div class="method-actions"><button type="button" class="play-methods" id="playMethods" aria-pressed="false">▶ 4手法の変化を見る</button><button type="button" class="compare-button" id="compareMethods" aria-expanded="false" aria-controls="methodComparison">数値一覧</button><button type="button" class="restore-methods" id="restoreManualQuick" hidden>↶ 元に戻す</button></div><div class="play-status" id="playStatus" aria-live="polite" hidden>同じ容量条件で、流れと生成割合を切り替えます</div><section id="methodComparison" class="compare-panel" hidden aria-label="同じ容量条件での４手法比較"><h3>同じ容量で4手法を比較</h3><div class="compare-mode-buttons" role="group" aria-label="比較する容量条件"><button type="button" class="compare-mode" data-compare-scenario="showcase" aria-pressed="true">違いが見えやすい例</button><button type="button" class="compare-mode" data-compare-scenario="baseline" aria-pressed="false">初期容量100%</button></div><p class="compare-hint" id="compareScenarioNote">違いを見やすくするため、いくつかの反応容量を変更した架空の条件です。すべての手法に同じ条件を使います。</p><div class="compare-highlight" aria-live="polite"><span>4手法で最も差が大きい糖鎖</span><strong id="compareDelta">計算中</strong></div><div class="compare-legend"><span><i class="compare-key compare-A"></i>糖鎖A</span><span><i class="compare-key compare-B"></i>糖鎖B</span><span><i class="compare-key compare-C"></i>糖鎖C</span></div><div id="comparisonResults"></div><div class="compare-actions"><button type="button" class="compare-apply" id="applyShowcase">この条件で4手法を切り替えてみる</button><button type="button" class="compare-restore" id="restoreManual" hidden>↶ 元の手動設定に戻す</button></div><p class="compare-caution">※架空の共通条件での計算結果です。手法の優劣を示すものではありません。</p></section></div>
+      <div id="inverseHeading" hidden><div class="section-head"><h2>観測分布と比べよう</h2><span class="tag">Inverse</span></div><p class="method-note">灰色＝観測例 ／ 青＝自分の予測 ／ 緑＝Inverseの流量</p></div>
       <div class="result-summary"><div><span>最大流量</span><strong id="totalFlow">—</strong></div><div><span id="modeCaption">手動と目標のズレ</span><strong id="gapHeadline">—</strong><em id="gapUnit"> pt</em></div></div>
-      <h2 class="subhead">目標と糖鎖の生成割合</h2>
+      <h2 class="subhead">糖鎖の生成割合</h2>
       <div class="legend"><span><i class="key bar-target"></i>目標（固定）</span><span><i class="key bar-manual"></i>自分の予測</span><span id="inverseKey" hidden><i class="key bar-auto"></i>自動補正</span></div>
       <div id="distribution"></div>
-      <div class="inverse-result-note" id="inverseResultNote" hidden role="status"><strong class="inverse-step3-heading"><span class="inverse-stepnum">3</span>目標分布を再現できました！</strong><span>糖鎖Cに必要な <b id="inverseResultRequiredC">66</b> の流量を通せるよう、E13の容量を補正しました。<b>最大流量 <span id="inverseResultTotalFlow">120</span> は維持</b>しています。</span></div>
+      <div class="inverse-result-note" id="inverseResultNote" hidden role="status"><strong>✓ 観測分布と一致！</strong><span>最大流量 <b id="inverseResultTotalFlow">120</b> はそのままです。</span></div>
       <div class="gap-box"><div class="small" id="gapHeading">目標まであと</div><div class="big" id="gapNumber">—</div><div class="small" id="gapDescription">小さいほど目標の糖鎖分布に近いことを表します。</div><p class="change-feedback" id="changeFeedback" role="status" aria-live="polite">まずは黄色い線を動かしてみましょう！</p></div>
-      <div class="inverse-nudge" id="inverseNudge"><strong>目標の糖鎖分布を再現するには、どの反応容量を変えればいい？</strong><span>Inverseでは、目標分布から必要な容量の補正を数理最適化で求めます。</span></div>
-      <button type="button" id="toInverse" class="action">✨ Inverseで容量を逆算してみる</button>
+      <div class="inverse-nudge" id="inverseNudge"><strong>では、観測分布から容量を逆算すると？</strong></div>
+      <button type="button" id="toInverse" class="action">▶ Inverseも試してみる</button>
       <p class="cta-footnote" id="inverseNudgeFoot">※自動補正は手動設定からではなく、基準容量から計算した比較用の例です。</p>
       <button type="button" id="toForward" class="secondary" style="width:100%;margin-top:15px" hidden>← 手動操作に戻る</button>
       <div class="research-note"><details><summary>このアプリと研究の関係</summary><p>丸は生成途中の糖鎖、線は反応を表す模式ネットワークです。Forwardでは最大フローを求め、UQ/CWQ/SU/LCRQの4つの目的関数で流量を配分します。Inverseでは、固定した目標分布を再現するよう反応容量を最小限変更した、別の最大フロー解を表示します。Inverseで得られた流量と、補正容量をForwardの4手法に再入力した場合の流量は同一とは限りません。</p></details><p>※ネットワーク・目標分布は架空の例です（実測値ではありません）。Forwardの4手法は目標誤差を最小化しません。</p></div>

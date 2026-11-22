@@ -1,68 +1,56 @@
-# Glycan Flow Simulator — Forward / Inverse インタラクティブ教材
+# Glycan Flow Simulator v9 — 触って理解する Forward / Inverse
 
-このリポジトリは、糖鎖生合成をフローネットワークで説明し、**Forward（容量から流量・終端分布を計算）** と **Inverse（目標分布を再現する容量補正を求める）** の考え方を体験する、**独立した静的Webサイト**です。
+先輩のサイトとは**別に公開・管理する**独立した研究紹介サイトです。ライトテーマの1画面Forwardと、観測分布をもとに容量補正を体験できるInverseを収録しています。
 
-## すぐ試す
+## まず動かす
 
-`index.html` をダブルクリックするだけで起動します。サーバーやAPIキーは必要ありません。GitHub Pagesにもそのまま配置できます。
+1. `index.html` をダブルクリックします。ネット接続や追加ソフトは不要です。
+2. Forwardで黄色いエッジE13の容量を100%→150%に動かし、糖鎖の分布を観察します。
+3. **「▶ 4手法の変化を見る」**を押すと、同じ説明用容量でUQ→CWQ→SU→LCRQが順に切り替わります。ネットワークの線幅と生成割合が連動して変化します。
+4. **「↶ 元に戻す」**で自分の手動設定に戻れます。各手法ボタンを直接押すこともできます。「数値一覧」では4手法を表でも比較できます。
+5. Inverse画面で、質量分析を模した**架空の観測分布**（糖鎖A25%・B20%・C55%）を見て、**「▶ 観測分布に合う容量を逆算」**を押します。E13容量58→66の補正と、観測分布を再現する流量を表示します。
 
-- ネットワークの線をクリックして反応を選択し、容量を初期値の0〜200%で操作します。
-- UQ、CWQ、SU、LCRQを切り替え、流量・終端糖鎖の分布の変化を見ます。
-- 「4手法を同じ初期容量で比較する」で、すべてのエッジを100%とした共通条件を比較します。
-- Inverseの画面で、糖鎖Cの目標割合がなぜ元の容量では実現できないかを確認し、E13を58→66に補正した結果を表示します。
+## v9の改善点
 
-## 科学的な注意
+- Forward: 比較ポップアップを開かなくても、ワンクリックで4手法を自動的に切り替えて確認できます。手法の変更に合わせて線幅・割合の棒グラフがアニメーションします。
+- Forward: 手動設定は保持し、「元に戻す」で復元できます。比較用容量は v8 で独立数値検証した共通条件です。
+- Inverse: 「質量分析を想定した観測分布 → E13容量58→66 → 一致する流量」の短い体験に変更しました。数式などの説明は「なぜE13の容量を増やすの？」に収納しています。
+- 見た目: 明るい画面、スマホ対応、デスクトップForwardの1画面構成を維持しました。
 
-- **ネットワークの容量と目標分布は説明用に作成した架空の値です。** 実験データ、遺伝子発現量、測定した糖鎖分布ではありません。
-- Forwardは、最大流量を求めて固定した後、4種類の二次目的関数から1つを選び流量を配分します。目標分布とのズレを最小化する計算ではありません。
-- Inverseは、基準容量からの変更を小さくし、目標（A25%、B20%、C55%）を再現する**事前計算済みの検証例**です。現在の手動スライダー設定からその場で最適化しているわけではありません。
-- Inverseが与える流量は、補正容量でForwardの4手法を再計算したときの流量と一致するとは限りません。
-- 数理検証の経緯と条件は `MATH_VALIDATION_v6.md` を参照してください。これは**v6計算コアの検証資料**で、v7では計算コアを変更せず表示と説明を改良しています。
+## 数理上の注意（大切）
 
-## 構成
+- デモのネットワーク、反応容量、観測分布はすべて**人工的に設定した値**です。実際の質量分析結果やRNA由来のTPMではありません。
+- Forwardは最大流を求め、最大流量を固定して4種類の二次目的関数のどれかで流量を配分します。目標との誤差を自動で最小化しているわけではありません。
+- 比較用の共通容量は `E5=25%`, `E7=200%`, `E8=150%`, `E9=150%`, `E11=25%`, `E13=200%`（そのほか100%）です。違いが見えやすい教育用の条件であり、手法の精度順位を示すものではありません。
+- InverseのE13容量58→66と対応流量は、基準容量からの変更をできるだけ小さくし、観測分布を再現できることを事前検証した**固定の例**です。ボタン押下時にソルバーを走らせるものでも、Forwardでユーザーが変更した状態から逆算するものでもありません。
+- Inverseによる流量が観測分布を再現しても、補正容量で**Forwardの4手法を再計算した流量**が観測分布を再現するとは限りません。サイト上にも注記があります。
+- Inverseの補正容量に手動スライダーの上限200%を課していません。反応容量の倍率は酵素活性を実測した倍率ではありません。
 
-```text
-index.html               公開ページ（オフラインでも動作する完成済み1ファイルHTML）
-template.html            UI/CSSの編集用テンプレート
-app-demo.js              操作と可視化のロジック
-glycan-solver.mjs         Forwardの数理計算コア
-inverse_fixture.json     事前検証したInverseの補正例
-build_offline.py         index.htmlの再生成用
-oracle_trust_constr.json Forward数値比較用データ
-MATH_VALIDATION_v6.md    数理検証レポート
-tests/                   数値・UIテスト
-previews/                画面の参考画像
-```
+## ファイル構成
 
-## GitHub Pagesで独立公開
+- `index.html`：**公開用の完成版**、外部依存なし
+- `template.html`, `app-demo.js`：編集用の画面・操作ソース
+- `glycan-solver.mjs`：Forward計算
+- `inverse_fixture.json`：検証済みInverseの補正例
+- `build_offline.py`：編集後に `python build_offline.py` で1ファイルHTML再生成
+- `tests/`：数値とブラウザ操作の自動テスト
+- `MATH_VALIDATION_v6.md`, `MATH_VALIDATION_v8_ADDENDUM.md`：計算と比較容量の検証記録。v9では計算コアを変更していません。
+- `previews/`：画面確認画像
 
-**先輩のサイトや既存リポジトリは変更しません。** 新規リポジトリを作成し、このフォルダの**中身**をルートへアップロードしてください。
+## 検証
 
-1. GitHubで新しいリポジトリを作る（例：`Glycan-Flow-Simulator`）。
-2. `index.html`、`README.md`、関連ソース・`tests/`などを新規リポジトリのルートにアップロードする。
-3. GitHubの `Settings` → `Pages` で `Deploy from a branch`、`main`、`/ (root)`を選び保存する。
-4. 公開URLは通常 `https://<ユーザー名>.github.io/<リポジトリ名>/` の形式になります。
-
-公開リポジトリにコードや画像を置く前に、第三者の素材やコードを再利用していないか、必要な許諾・出典表示も確認してください。
-
-## ソース変更・テスト
-
-HTMLは `template.html`、`app-demo.js`、`glycan-solver.mjs`、`inverse_fixture.json` から生成します。
-
-```bash
-python build_offline.py
+```sh
 node tests/test.mjs
 node tests/test_inverse_fixture.mjs
-```
-
-追加の画面検証にはPythonのPlaywrightとChromiumが必要です。
-
-```bash
-python -m pip install playwright
-python -m playwright install chromium
-python tests/test_ui.py
+python tests/test_showcase_numeric.py    # SciPy+NumPyが必要
+python tests/test_ui.py                 # Playwright+Chromiumが必要
 python tests/test_viewport.py
 python tests/test_inverse_explanation.py
+python tests/test_v9_interaction.py
 ```
 
-この教材は研究の考え方を紹介するためのものであり、実測データの再現性や生物学的妥当性を保証するものではありません。
+## 公開・更新
+
+独立公開中の `sakura2579/Glycan-Flow-Simulator` の `main` ブランチに、内容を確認した後で**このフォルダの中身**をアップロードしてください。`index.html` はリポジトリのルートに置きます。GitHub Pagesの設定を変更する必要はありません。先輩のサイトや元のForkは変更しません。
+
+第三者のコードや素材の再利用権限・出典表示は公開前に確認してください。
